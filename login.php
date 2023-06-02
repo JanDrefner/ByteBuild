@@ -1,23 +1,26 @@
 <?php
-@include 'config.php';
+@include 'db-config.php';
 session_start();
 if (isset($_POST['submit'])) {
+    $conn = new PDO("mysql:host={$servername};dbname={$database};charset=utf8", $username, $password);
+    $ea = trim($_POST['email']);
+    $p = md5($_POST['password']);
 
-    $ea = mysqli_real_escape_string($conn, $_POST['Email']);
-    $p = md5($_POST['Pass']);
+    $sql = " SELECT UserID, Email, FirstName, LastName FROM usertbl WHERE Email = :email && Password_Hash = :password LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(":email", $ea, PDO::PARAM_STR);
+    $stmt->bindParam(":password", $p, PDO::PARAM_STR);
 
-    $select = " SELECT * FROM usertbl WHERE Email = '$ea' && Password_Hash = '$p' ";
-
-    $result = mysqli_query($conn, $select);
-
-    if (mysqli_num_rows($result) > 0) {
-        header('location:homepage.php');
-        $_SESSION["Email"] = $ea;
-        $_SESSION["Pass"] = $p;
-        $_SESSION["user"] = 'user';
-    } else {
+    if ($stmt->execute() > 0) {
+        while ($account = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $_SESSION['user'] = $account;
+            header('location:homepage.php');
+            exit();
+        }
         $error[] = 'User does not exist';
-    }
+    } else {
+        $error[] = 'The connection to the database has failed. Please Try Again!';
+    } $stmt=null;
 }
 
 ?>
@@ -41,10 +44,10 @@ if (isset($_POST['submit'])) {
         <a href="homepage.html"><img src="imgs/bytebuildlogo.png" alt="logo"></a>
     </div>
     <div class="container-fluid d-flex justify-content-center">
-        <form class="login-form" method="post" action="homepage.php">
+        <form class="login-form" method="post" action="login.php">
             <input type="email" class="login-form-text" placeholder="Email Address" name="email" required>
             <input type="password" class="login-form-text" placeholder="Password" name="password" required>
-            <input type="submit" class="hero-btn" value="Login">
+            <input type="submit" name="submit" class="hero-btn" value="Login">
             <br><br>
             <a href="signup.php" class="btn-sl">Don't Have an Account?</a>
         </form>

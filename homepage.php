@@ -2,8 +2,6 @@
 session_start();
 @include 'config.php';
 if (isset($_SESSION['user'])) {
-  $ea = $_SESSION["Email"];
-  $p = $_SESSION["Pass"];
   $user = $_SESSION['user'];
 }
 ?>
@@ -53,9 +51,10 @@ if (isset($_SESSION['user'])) {
                                     <hr class="dropdown-divider">
                                 </li>
                                 <?php
-                                if (isset($ea)){
+                                if (isset($user)){
                                 ?>
-                                <li><a class="dropdown-item text-center" href="login.php">Sign Out</a></li>
+                                <li><span class="dropdown-item text-center"><?php echo $user['FirstName'] ." ". $user['LastName']; ?></span></li>
+                                <li><a class="dropdown-item text-center" href="logout.php">Sign Out</a></li>
                                 <?php
                                 } else {
                                 ?>
