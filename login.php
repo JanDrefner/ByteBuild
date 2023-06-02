@@ -1,26 +1,21 @@
 <?php
 @include 'db-config.php';
+@include 'AccountDAO.php';
 session_start();
 if (isset($_POST['submit'])) {
-    $conn = new PDO("mysql:host={$servername};dbname={$database};charset=utf8", $username, $password);
-    $ea = trim($_POST['email']);
-    $p = md5($_POST['password']);
+    $dao = new AccountDAO($servername, $database, $username, $password);
+    $email = trim($_POST['email']);
+    $password = md5($_POST['password']);
 
-    $sql = " SELECT UserID, Email, FirstName, LastName FROM usertbl WHERE Email = :email && Password_Hash = :password LIMIT 1";
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(":email", $ea, PDO::PARAM_STR);
-    $stmt->bindParam(":password", $p, PDO::PARAM_STR);
+    $user = $dao->loginUser($email, $password);
 
-    if ($stmt->execute() > 0) {
-        while ($account = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $_SESSION['user'] = $account;
-            header('location:homepage.php');
-            exit();
-        }
-        $error[] = 'User does not exist';
+    if (!is_null($user)) {
+        $_SESSION['user'] = $user;
+        header('Location: homepage.php');
+        exit();
     } else {
-        $error[] = 'The connection to the database has failed. Please Try Again!';
-    } $stmt=null;
+        $_SESSION["error"] = "User does not Exist.";
+    }
 }
 
 ?>
@@ -52,11 +47,11 @@ if (isset($_POST['submit'])) {
             <a href="signup.php" class="btn-sl">Don't Have an Account?</a>
         </form>
         <?php
-        if (isset($error)) {
-            foreach ($error as $error) {
-                $_SESSION["user"] = 'user';
-                echo '<span class ="errormsg">' . $error . '</span>';
-            }
+        if (isset($_SESSION["error"]) && !is_null($_SESSION["error"])) {
+        ?>
+            <span class="message"> <?php echo $_SESSION["error"]; ?></span>
+        <?php
+            $_SESSION["error"] = null;
         }
         ?>
     </div>

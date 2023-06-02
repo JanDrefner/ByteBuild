@@ -1,38 +1,37 @@
 <?php
-@include 'config.php';
-
+@include 'db-config.php';
+@include 'AccountDAO.php';
 if (isset($_POST['register'])) {
-    $ea = mysqli_real_escape_string($conn, $_POST['Email']);
-    $fn = mysqli_real_escape_string($conn, $_POST['FName']);
-    $ln = mysqli_real_escape_string($conn, $_POST['LName']);
-    $p = md5($_POST['Pass']);
-    $cp = md5($_POST['ConPass']);
-    $select = " SELECT * FROM usertbl WHERE Email = '$ea' && Password_Hash = '$p' ";
+    $dao = new AccountDAO($servername, $database, $username, $password);
+    $email = trim($_POST['Email']);
+    $firstname = trim($_POST['FName']);
+    $lastname = trim($_POST['LName']);
+    $password = md5($_POST['Pass']);
+    $confirmpassword = md5($_POST['ConPass']);
 
-    $result = mysqli_query($conn, $select);
-    function valid_email($str)
-    {
-        return (!preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", $str)) ? FALSE : TRUE;
-    }
-
-    if (strlen($p) < 8) {
+    if (strlen($password) < 8) {
+        echo "1";
         $error[] = 'Password must be at least 8 characters';
-    } else if (!preg_match("/[a-z]/i", $p)) {
+    } else if (!preg_match("/[a-z]/i", $password)) {
         $error[] = 'Password must contain at least one letter';
-    } else if (!preg_match("/[0-9]/", $p)) {
+        echo "2";
+    } else if ($_POST['Pass'] != $_POST['ConPass']) {
+        $error[] = 'Password must match';
+        echo "3";
+    } else if (!preg_match("/[0-9]/", $password)) {
         $error[] = 'Password must contain at least one number';
-    } else if (!valid_email($ea)) {
+        echo "4";
+    } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error[] = 'Valid Email is required';
+        echo "5";
     } else {
-        if (mysqli_num_rows($result) > 0) {
-            $error[] = '<script>alert("Existing User")</script>';
+        $isAdded = $dao->signUpUser($email, $firstname, $lastname, $password);
+        if (!$isAdded) {
+            $error[] = 'There was an error in adding a User';
+            echo "6";
         } else {
-            if ($p != $cp) {
-                $error[] = 'Password did not matched';
-            } else {
-                $insert = "INSERT INTO usertbl(Email,FirstName,LastName,Password_Hash) Values('$ea', '$fn', '$ln', '$p')";
-                mysqli_query($conn, $insert);
-            }
+            header("Location: login.php");
+            exit();
         }
     }
 }
@@ -57,7 +56,7 @@ if (isset($_POST['register'])) {
         <a href="homepage.html"><img src="imgs/bytebuildlogo.png" alt="logo"></a>
     </div>
     <div class="container-fluid d-flex justify-content-center">
-        <form method="POST" class="login-form" action="login.php">
+        <form method="POST" class="login-form" action="signup.php">
             <input type="email" class="login-form-text" placeholder="Email Address" id="Email" name="Email" autocomplete="off" required>
             <input type="text" class="login-form-text" placeholder="First Name" id="FName" name="FName" autocomplete="off" required>
             <input type="text" class="login-form-text" placeholder="Last Name" id="LName" name="LName" autocomplete="off" required>
