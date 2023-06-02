@@ -1,0 +1,121 @@
+
+h1,h2,h3,h4,h5,h6,p,a {
+    font-family: 'League Spartan', sans-serif;
+}
+
+h1 {
+    font-size: 50pt;
+    font-weight: 700;
+}
+
+.quote {
+    font-weight: 400;
+}
+
+.shop {
+    display: none
+}
+
+.carousel-item {
+    height: 32rem;
+    color: white;
+    position: relative;
+}
+
+.hero-btn{
+    display: inline-block;
+    text-decoration: none;
+    padding: 12px 34px;
+    border-radius: 10px;
+    color: white;
+    position: relative;
+    cursor: pointer;
+    font-size: 15px;
+    border: 1px solid #ffffff;
+    background: #1d1d1d;
+    color: #ffffff;
+}
+
+.hero-btn:hover{
+    border: 1px solid #ffc107;
+    background: #ffc107;
+    color: black;
+    transition: 0.3s;
+}
+
+
+
+.login-form{
+    max-width: 600px;
+    margin: auto;
+    padding: 0 10px;
+    overflow: hidden;
+    text-align: center;
+    position: relative;
+}
+
+.login-form-text{
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 16px 0;
+    border: 0;
+    background: #1d1d1d;
+    padding: 20px 40px;
+    color: white;
+}
+
+.btn-sl{
+    text-decoration: none;
+    border: none;
+    color: #ffffff;
+    font-size: 17px;
+    transition: 0.5s;
+}
+
+.btn-sl:hover{
+    border: none;
+    color: #ffc107;
+}
+
+/** Contact **/
+.contact-section h1{
+    text-align: center;
+    color: #ddd;
+}
+
+.border{
+    margin-top: 20px;
+    background: #55585B;
+}
+
+.contact-form{
+    max-width: 600px;
+    margin: auto;
+    padding: 0 10px;
+    overflow: hidden;
+    align-items: center;
+    text-align: center;
+}
+
+.contact-form-text{
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 16px 0;
+    border: 0;
+    background: #1d1d1d;
+    padding: 20px 40px;
+    color: white;
+}
+
+textarea.contact-form-text{
+    resize: none;
+    height: 120px;
+}
+
+.contact-txt{
+    font-size: 5rem;
+    font-weight: 600;
+    text-align: center;
+}
